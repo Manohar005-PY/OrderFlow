@@ -1,5 +1,6 @@
 from pydantic import BaseModel, EmailStr, Field
 from datetime import datetime
+
 class UserCreate(BaseModel):
     email:EmailStr
     password:str = Field(min_length=8, max_length=128)
@@ -14,3 +15,8 @@ class UserResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+class UserLogin(BaseModel):
+    email:EmailStr
+    password:str
+
