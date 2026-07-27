@@ -1,8 +1,10 @@
 from argon2 import PasswordHasher
+from fastapi import HTTPException,status
 from argon2.exceptions import VerifyMismatchError
 from datetime import datetime,timezone,timedelta
 from app.core.config import settings
 import jwt
+from jwt.exceptions import InvalidTokenError
 
 ph = PasswordHasher()
 
@@ -25,3 +27,11 @@ def create_access_token(subject:str) -> str:
     token = jwt.encode(payload,settings.JWT_SECRET_KEY,algorithm=settings.JWT_ALGORITHM,)
 
     return token
+
+def decode_access_token(token:str) -> dict:
+    try:
+        payload = jwt.decode(token,settings.JWT_SECRET_KEY,algorithms=[settings.JWT_ALGORITHM])
+        return payload
+    except InvalidTokenError:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="Inncorrect token") 
+    

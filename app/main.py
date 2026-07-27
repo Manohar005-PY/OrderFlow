@@ -1,8 +1,11 @@
 from fastapi import FastAPI
-from app.api.v1.routes.auth import router
-
+from app.api.v1.routes.auth import auth_router
+from app.api.v1.routes.users import user_router
 app = FastAPI()
-app.include_router(router)
+
+app.include_router(auth_router)
+app.include_router(user_router)
+
 
 @app.get("/")
 def health_check():
