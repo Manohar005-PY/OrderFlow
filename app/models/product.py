@@ -3,6 +3,7 @@ from datetime import datetime
 
 from sqlalchemy import Boolean,DateTime,Numeric, String,func,true
 from sqlalchemy.orm import Mapped,mapped_column
+from sqlalchemy.orm import relationship
 
 from app.db.base import Base
 
@@ -56,3 +57,4 @@ class Product(Base):
         onupdate=func.now(),
         nullable=False
     )
+    inventory = relationship("Inventory", back_populates="product", uselist=False)
