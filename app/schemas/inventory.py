@@ -14,4 +14,6 @@ class InventoryResponse(BaseModel):
     updated_at:datetime
 
     model_config = ConfigDict(from_attributes=True)
-    
+
+class StockOperation(BaseModel):
+    quantity:int = Field(gt=0)

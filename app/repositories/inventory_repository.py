@@ -25,4 +25,14 @@ class InventoryRepository:
         self.db.refresh(inventory)
 
         return inventory
+
+    def get_by_id(
+            self,
+            inventory_id:int,
+    ) -> Inventory | None:
+        return (
+            self.db.query(Inventory)
+            .filter(Inventory.id == inventory_id)
+            .first()
+        )
     
