@@ -1,7 +1,7 @@
 from app.models.product import Product
 from app.repositories.product_repository import ProductRepository
 from app.schemas.product import ProductCreate
-
+from app.core.exception import ProductNotFoundException
 
 class ProductService:
     def __init__(self, repository: ProductRepository):
@@ -10,7 +10,7 @@ class ProductService:
     def create_product(self, product_data: ProductCreate) -> Product:
         existing = self.repository.get_by_sku(product_data.sku)
         if existing:
-            raise ValueError("SKU already exists.")
+            raise ProductNotFoundException()
 
         product = Product(
             sku=product_data.sku,

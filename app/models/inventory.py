@@ -47,3 +47,7 @@ class Inventory(Base):
         "Product",
         back_populates="inventory",
     )
+
+    @property
+    def available_quantity(self) -> int:
+        return self.quantity - self.reserved_quantity
