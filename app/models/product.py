@@ -57,4 +57,9 @@ class Product(Base):
         onupdate=func.now(),
         nullable=False
     )
+
     inventory = relationship("Inventory", back_populates="product", uselist=False)
+
+    order_items = relationship(
+    "OrderItem",
+    back_populates="product",)
