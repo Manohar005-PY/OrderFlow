@@ -1,5 +1,5 @@
 from decimal import Decimal
-
+from app.models.order_enums import OrderStatus
 from pydantic import BaseModel, ConfigDict, Field
 
 
@@ -9,7 +9,7 @@ class OrderItemCreate(BaseModel):
 
 
 class OrderCreate(BaseModel):
-    items: list[OrderItemCreate]
+    items: list[OrderItemCreate] = Field(min_length=1)
 
 
 class OrderItemResponse(BaseModel):
@@ -28,3 +28,6 @@ class OrderResponse(BaseModel):
     items: list[OrderItemResponse]
 
     model_config = ConfigDict(from_attributes=True)
+
+class OrderStatusUpdate(BaseModel):
+    status:OrderStatus

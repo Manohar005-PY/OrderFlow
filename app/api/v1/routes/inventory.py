@@ -38,9 +38,11 @@ def create_inventory(
     service = InventoryService(
     inventory_repository,
     product_repository,
+    db
     )
     try:
-        return service.create_inventory(data)
+        with db.begin():
+            return service.create_inventory(data)
 
     except ValueError as e:
         raise HTTPException(
@@ -68,14 +70,17 @@ def add_stock(
 
     service = InventoryService(
         inventory_repository,
-        product_repository
+        product_repository,
+        db
     )
 
     try:
-        return service.add_stock(
-            product_id,
-            data.quantity
-        )
+        with db.begin():
+            return service.add_stock(
+                product_id,
+                data.quantity
+            )
+        
     except ValueError as e:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -101,13 +106,16 @@ def remove_stock(
 
     service = InventoryService(
         inventory_repository,
-        product_repository
+        product_repository,
+        db
     )
     try:
-        return service.remove_stock(
-            product_id,
-            data.quantity
-        )
+        with db.begin():
+            return service.remove_stock(
+                product_id,
+                data.quantity
+            )
+        
     except InventoryNotFoundException:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -139,13 +147,16 @@ def reserve_stock(
     service = InventoryService(
         inventory_repository,
         product_repository,
+        db
     )
 
     try:
-        return service.reserve_stock(
-            product_id,
-            data.quantity,
-        )
+        with db.begin():
+            return service.reserve_stock(
+                product_id,
+                data.quantity,
+            )
+        
     except InventoryNotFoundException:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -177,13 +188,16 @@ def release_stock(
 
     service = InventoryService(
         inventory_repository,
-        product_repository
+        product_repository,
+        db
     )
     try:
-        return service.release_stock(
-            product_id,
-            data.quantity
-        )
+        with db.begin():
+            return service.release_stock(
+                product_id,
+                data.quantity
+            )
+        
     except InventoryNotFoundException:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

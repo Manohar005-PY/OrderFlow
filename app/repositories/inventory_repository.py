@@ -9,19 +9,19 @@ class InventoryRepository:
 
     def create(self,inventory:Inventory) -> Inventory:
         self.db.add(inventory)
-        self.db.commit()
+        self.db.flush()
         self.db.refresh(inventory)
 
         return inventory
 
-    def get_by_product_id(self,product_id:int) -> Inventory:
+    def get_by_product_id(self,product_id:int) -> Inventory|None:
         
         inventory = self.db.query(Inventory).filter(Inventory.product_id == product_id).first()
 
         return inventory
 
     def update(self,inventory:Inventory) -> Inventory:
-        self.db.commit()
+        self.db.flush()
         self.db.refresh(inventory)
 
         return inventory

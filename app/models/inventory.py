@@ -50,4 +50,10 @@ class Inventory(Base):
 
     @property
     def available_quantity(self) -> int:
-        return self.quantity - self.reserved_quantity
+        available = (
+            self.quantity-
+            self.reserved_quantity
+        )
+        if available < 0:
+            raise RuntimeError("Inventory is Corrupped")
+        return available

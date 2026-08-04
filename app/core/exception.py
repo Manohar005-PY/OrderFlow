@@ -14,3 +14,9 @@ class InsufficentStockException(OrderFlowException):
     pass
 class InvalidReservationException(OrderFlowException):
     pass
+class DuplicateProductException(OrderFlowException):
+    pass
+class InvalidOrderStatusTransitionException(OrderFlowException):
+    pass
+class OrderNotFoundExceptiion(OrderFlowException):
+    pass

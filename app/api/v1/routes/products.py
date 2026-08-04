@@ -31,7 +31,7 @@ def create_product(
     ),
 ):
     repository = ProductRepository(db)
-    service = ProductService(repository)
+    service = ProductService(repository,db)
 
     try:
         return service.create_product(product)
@@ -39,4 +39,4 @@ def create_product(
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail=str(e),
-        ) from e
+        ) 

@@ -10,7 +10,7 @@ class ProductRepository:
 
     def create(self, product: Product) -> Product:
         self.db.add(product)
-        self.db.commit()
+        self.db.flush()
         self.db.refresh(product)
         return product
 
@@ -37,6 +37,6 @@ class ProductRepository:
 
     def deactivate(self, product: Product) -> Product:
         product.is_active = False
-        self.db.commit()
+        self.db.flush()
         self.db.refresh(product)
         return product
