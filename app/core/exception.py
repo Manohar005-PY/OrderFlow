@@ -20,3 +20,9 @@ class InvalidOrderStatusTransitionException(OrderFlowException):
     pass
 class OrderNotFoundExceptiion(OrderFlowException):
     pass
+class PaymentNotFoundException(OrderFlowException):
+    pass
+class PaymentAlreadyCompletedException(OrderFlowException):
+    pass
+class InvalidPaymnetStateException(OrderFlowException):
+    pass
