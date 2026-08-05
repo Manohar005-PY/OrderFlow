@@ -35,4 +35,14 @@ class InventoryRepository:
             .filter(Inventory.id == inventory_id)
             .first()
         )
-    
+
+    def get_product_id_for_update(
+            self,
+            product_id:int,
+    ) -> Inventory | None:
+        return(
+            self.db.query(Inventory)
+            .filter(Inventory.product_id == product_id)
+            .with_for_update()
+            .first()
+        )

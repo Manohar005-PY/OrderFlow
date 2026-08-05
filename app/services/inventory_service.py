@@ -25,9 +25,12 @@ class InventoryService:
 
         if not product:
             raise ProductNotFoundException()
+        
         existing = self.inventory_repository.get_by_product_id(data.product_id)
+
         if existing:
             raise InventoryAlreadyexistsException()
+        
         inventory = Inventory(product_id = data.product_id,
                                 quantity=data.quantity)
         inventory = self.inventory_repository.create(inventory)
@@ -91,7 +94,7 @@ class InventoryService:
             quantity:int,
     ) -> Inventory:
 
-        inventory = self.inventory_repository.get_by_product_id(product_id)
+        inventory = self.inventory_repository.get_product_id_for_update(product_id)
         if not inventory:
             raise InventoryNotFoundException()
         if inventory.available_quantity < quantity:
