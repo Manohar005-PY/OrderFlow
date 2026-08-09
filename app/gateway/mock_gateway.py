@@ -1,5 +1,5 @@
 import uuid
-
+import random
 from app.gateway.payment_gateway import PaymentGateway
 
 from app.models.payment import Payment
@@ -19,4 +19,9 @@ class MockGateway(PaymentGateway):
         provider_payment_id: str,
     ) -> bool:
 
-        return True
+        return random.choice(
+            [
+                True,
+                False
+            ]
+        )

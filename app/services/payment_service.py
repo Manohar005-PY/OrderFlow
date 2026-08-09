@@ -1,5 +1,7 @@
 from app.repositories.payment_repository import PaymentRepository
 from app.repositories.order_repository import OrderRepository
+from app.repositories.order_item_repository import OrderItemRepository
+from app.services.inventory_service import InventoryService
 from app.schemas.payment import PaymentCreate
 from app.models.payment_enums import PaymentStatus
 from app.core.exception import OrderNotFoundExceptiion,PaymentAlreadyCompletedException,PaymentNotFoundException
@@ -13,10 +15,14 @@ class PaymentService:
             self,
             payment_repository:PaymentRepository,
             order_repository:OrderRepository,
+            order_item_repository:OrderItemRepository,
+            inventory_service:InventoryService,
             gateway: PaymentGateway,
     ):
         self.payment_repository = payment_repository
         self.order_repository = order_repository
+        self.order_item_repository = order_item_repository
+        self.inventory_service = inventory_service
         self.gateway =gateway
 
     def create_payment(
@@ -72,7 +78,29 @@ class PaymentService:
 
         if not verified:
             payment.status = PaymentStatus.FAILED
-        return self.payment_repository.update(payment)
+            self.payment_repository.update(payment)
+
+            order = self.order_repository.get_by_id(
+                payment.order_id
+            )
+
+            if not order:
+                raise OrderNotFoundExceptiion()
+
+            items = self.order_item_repository.get_by_order_id(
+                order.id
+            )
+
+            for item in items:
+                self.inventory_service.release_stock(
+                    product_id=item.product_id,
+                    quantity=item.quantity,
+                )
+
+            order.status = OrderStatus.CANCELLED
+            self.order_repository.update(order)
+
+            return payment
 
         payment.status = PaymentStatus.SUCCESS
         self.payment_repository.update(payment)
@@ -86,6 +114,8 @@ class PaymentService:
         self.order_repository.update(order)
 
         return payment
+
+    
     def process_webhook(
     self,
     provider_payment_id: str,
@@ -107,7 +137,29 @@ class PaymentService:
 
         if not verified:
             payment.status = PaymentStatus.FAILED
-            return self.payment_repository.update(payment)
+            self.payment_repository.update(payment)
+        
+            order = self.order_repository.get_by_id(
+                payment.order_id
+            )
+        
+            if not order:
+                raise OrderNotFoundExceptiion()
+        
+            items = self.order_item_repository.get_by_order_id(
+                order.id
+            )
+        
+            for item in items:
+                self.inventory_service.release_stock(
+                    product_id=item.product_id,
+                    quantity=item.quantity,
+                )
+        
+            order.status = OrderStatus.CANCELLED
+            self.order_repository.update(order)
+        
+            return payment
 
         if verified:
             payment.status = PaymentStatus.SUCCESS

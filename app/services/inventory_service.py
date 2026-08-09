@@ -108,7 +108,10 @@ class InventoryService:
             product_id:int,
             quantity:int,
     ) -> Inventory:
-        return self._reserve_stock(product_id,quantity)
+        return self._release_stock(
+            product_id,
+            quantity,
+        )
         
     def _release_stock(
             self,
