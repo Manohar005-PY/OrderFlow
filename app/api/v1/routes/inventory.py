@@ -11,6 +11,8 @@ from app.schemas.inventory import InventoryCreate, InventoryResponse, StockOpera
 from app.services.inventory_service import InventoryService
 from app.schemas.inventory import StockOperation
 from app.core.exception import InventoryNotFoundException,InsufficentStockException,InvalidReservationException
+from app.application.services.inventory_application_service import InventoryApplicationService
+from app.api.dependecies.service import get_inventory_application_service
 
 router = APIRouter(
     prefix="/inventory",
@@ -22,9 +24,13 @@ router = APIRouter(
     response_model=InventoryResponse,
     status_code=status.HTTP_201_CREATED,
 )
+
 def create_inventory(
     data: InventoryCreate,
-    db: Session = Depends(get_db),
+    # db: Session = Depends(get_db),
+    service:InventoryApplicationService = Depends(
+        get_inventory_application_service
+    ),
     current_user: User = Depends(
         required_roles(
             UserRole.ADMIN,
@@ -32,17 +38,16 @@ def create_inventory(
         )
     ),
 ):
-    inventory_repository = InventoryRepository(db)
-    product_repository = ProductRepository(db)
+    # inventory_repository = InventoryRepository(db)
+    # product_repository = ProductRepository(db)
 
-    service = InventoryService(
-    inventory_repository,
-    product_repository,
-    db
-    )
+    # service = InventoryService(
+    # inventory_repository,
+    # product_repository,
+    # db
+    # )
     try:
-        with db.begin():
-            return service.create_inventory(data)
+        return service.create_inventory(data)
 
     except ValueError as e:
         raise HTTPException(
@@ -57,7 +62,10 @@ def create_inventory(
 def add_stock(
     product_id: int,
     data: StockOperation,
-    db: Session = Depends(get_db),
+    # db: Session = Depends(get_db),
+    service:InventoryApplicationService = Depends(
+        get_inventory_application_service
+    ),
     current_user: User = Depends(
         required_roles(
             UserRole.ADMIN,
@@ -65,18 +73,17 @@ def add_stock(
         )
     ),
 ):
-    inventory_repository = InventoryRepository(db)
-    product_repository = ProductRepository(db)
+    # inventory_repository = InventoryRepository(db)
+    # product_repository = ProductRepository(db)
 
-    service = InventoryService(
-        inventory_repository,
-        product_repository,
-        db
-    )
+    # service = InventoryService(
+        # inventory_repository,
+        # product_repository,
+        # db
+    # )
 
     try:
-        with db.begin():
-            return service.add_stock(
+        return service.add_stock(
                 product_id,
                 data.quantity
             )
@@ -93,7 +100,10 @@ def add_stock(
 def remove_stock(
     product_id:int,
     data:StockOperation,
-    db:Session = Depends(get_db),
+    service:InventoryApplicationService = Depends(
+        get_inventory_application_service
+    ),
+    # db:Session = Depends(get_db),
     current_user = Depends(
         required_roles(
             UserRole.ADMIN,
@@ -101,17 +111,16 @@ def remove_stock(
         )
     )
 ):
-    inventory_repository = InventoryRepository(db)
-    product_repository = ProductRepository(db)
+    # inventory_repository = InventoryRepository(db)
+    # product_repository = ProductRepository(db)
 
-    service = InventoryService(
-        inventory_repository,
-        product_repository,
-        db
-    )
+    # service = InventoryService(
+        # inventory_repository,
+        # product_repository,
+        # db
+    # )
     try:
-        with db.begin():
-            return service.remove_stock(
+        return service.remove_stock(
                 product_id,
                 data.quantity
             )
@@ -133,7 +142,10 @@ def remove_stock(
 def reserve_stock(
     product_id:int,
     data:StockOperation,
-    db:Session = Depends(get_db),
+    service:InventoryApplicationService = Depends(
+        get_inventory_application_service
+    ),
+    # db:Session = Depends(get_db),
     current_user = Depends(
         required_roles(
             UserRole.ADMIN,
@@ -141,17 +153,17 @@ def reserve_stock(
         )
     )
 ):
-    inventory_repository = InventoryRepository(db)
-    product_repository = ProductRepository(db)
+    # inventory_repository = InventoryRepository(db)
+    # product_repository = ProductRepository(db)
 
-    service = InventoryService(
-        inventory_repository,
-        product_repository,
-        db
-    )
+    # service = InventoryService(
+        # inventory_repository,
+        # product_repository,
+        # db
+    # )
 
     try:
-        with db.begin():
+        # with db.begin():
             return service.reserve_stock(
                 product_id,
                 data.quantity,
@@ -175,7 +187,10 @@ def reserve_stock(
 def release_stock(
     product_id:int,
     data:StockOperation,
-    db:Session = Depends(get_db),
+    # db:Session = Depends(get_db),
+    service:InventoryApplicationService = Depends(
+        get_inventory_application_service
+    ),
     current_user = Depends(
         required_roles(
             UserRole.ADMIN,
@@ -183,16 +198,16 @@ def release_stock(
         )
     )
 ):
-    inventory_repository = InventoryRepository(db)
-    product_repository = ProductRepository(db)
+    # inventory_repository = InventoryRepository(db)
+    # product_repository = ProductRepository(db)
 
-    service = InventoryService(
-        inventory_repository,
-        product_repository,
-        db
-    )
+    # service = InventoryService(
+        # inventory_repository,
+        # product_repository,
+        # db
+    # )
     try:
-        with db.begin():
+        # with db.begin():
             return service.release_stock(
                 product_id,
                 data.quantity

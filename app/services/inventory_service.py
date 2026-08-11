@@ -10,16 +10,17 @@ class InventoryService:
 
     def __init__(self,
                  inventory_repository:InventoryRepository,product_repository:ProductRepository,
-                 db:Session
             ) -> None:
         self.inventory_repository = inventory_repository
         self.product_repository = product_repository
-        # self.db = db
 
-    def create_inventory(self,data:InventoryCreate) -> Inventory:
-        return self._create_inventory(data)
+    # def create_inventory(self,data:InventoryCreate) -> Inventory:
+    #     return self._create_inventory(data)
     
-    def _create_inventory(self,data:InventoryCreate) -> Inventory:
+    def create_inventory(
+            self,
+            data:InventoryCreate,
+    ) -> Inventory:
         
         product = self.product_repository.get_by_id(data.product_id)
 
@@ -36,18 +37,19 @@ class InventoryService:
         inventory = self.inventory_repository.create(inventory)
         return inventory
 
+    # def add_stock(
+    #         self,
+    #         product_id:int,
+    #         quantity:int,
+    # ) -> Inventory:
+    #     return self._add_stock(product_id,quantity)
+        
     def add_stock(
             self,
             product_id:int,
             quantity:int,
     ) -> Inventory:
-        return self._add_stock(product_id,quantity)
         
-    def _add_stock(
-            self,
-            product_id:int,
-            quantity:int,
-    ) -> Inventory:
         inventory = self.inventory_repository.get_by_product_id(product_id)
 
         if not inventory:
@@ -58,18 +60,19 @@ class InventoryService:
         inventory =  self.inventory_repository.update(inventory)
         return inventory
 
+    # def remove_stock(
+    #         self,
+    #         product_id:int,
+    #         quantity:int,
+    # ) -> Inventory:
+    #     return self._remove_stock(product_id,quantity)
+        
     def remove_stock(
             self,
             product_id:int,
             quantity:int,
     ) -> Inventory:
-        return self._remove_stock(product_id,quantity)
         
-    def _remove_stock(
-            self,
-            product_id:int,
-            quantity:int,
-    ) -> Inventory:
         inventory = self.inventory_repository.get_by_product_id(product_id)
         if not inventory:
             raise InventoryNotFoundException()
@@ -81,14 +84,14 @@ class InventoryService:
         inventory = self.inventory_repository.update(inventory)
         return inventory
     
-    def reserve_stock(
-            self,
-            product_id:int,
-            quantity:int
-    ) -> Inventory:
-        return self._reserve_stock(product_id,quantity)
+    # def reserve_stock(
+    #         self,
+    #         product_id:int,
+    #         quantity:int
+    # ) -> Inventory:
+    #     return self._reserve_stock(product_id,quantity)
     
-    def _reserve_stock(
+    def reserve_stock(
             self,
             product_id:int,
             quantity:int,
@@ -103,17 +106,18 @@ class InventoryService:
         inventory.reserved_quantity += quantity
         inventory = self.inventory_repository.update(inventory)
         return inventory
-    def release_stock(
-            self,
-            product_id:int,
-            quantity:int,
-    ) -> Inventory:
-        return self._release_stock(
-            product_id,
-            quantity,
-        )
+    
+    # def release_stock(
+    #         self,
+    #         product_id:int,
+    #         quantity:int,
+    # ) -> Inventory:
+    #     return self._release_stock(
+    #         product_id,
+    #         quantity,
+    #     )
         
-    def _release_stock(
+    def release_stock(
             self,
             product_id:int,
             quantity:int,

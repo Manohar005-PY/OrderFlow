@@ -2,13 +2,14 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.api.dependecies.auth import required_roles
-from app.db.session import get_db
+from app.db.session import get_db,get_auth_db
 from app.models.enums import UserRole
 from app.models.user import User
 from app.repositories.product_repository import ProductRepository
 from app.schemas.product import ProductCreate, ProductResponse
 from app.services.product_service import ProductService
-
+from app.application.services.product_application_service import ProdctApplicationService
+from app.api.dependecies.service import get_product_application_service
 router = APIRouter(
     prefix="/products",
     tags=["Products"],
@@ -22,16 +23,15 @@ router = APIRouter(
 )
 def create_product(
     product: ProductCreate,
-    db: Session = Depends(get_db),
+    # db: Session = Depends(get_db),
+    service:ProdctApplicationService = Depends(get_product_application_service),
     current_user: User = Depends(
         required_roles(
             UserRole.ADMIN,
             UserRole.STAFF,
         )
-    ),
+    )
 ):
-    repository = ProductRepository(db)
-    service = ProductService(repository,db)
 
     try:
         return service.create_product(product)
