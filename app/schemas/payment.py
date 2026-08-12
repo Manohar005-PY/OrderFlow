@@ -1,11 +1,12 @@
 from app.models.payment_enums  import PaymentProvider,PaymentStatus
 from datetime import datetime
-from pydantic import BaseModel,ConfigDict,Field
+from pydantic import BaseModel,ConfigDict
 from decimal import Decimal
 
 class PaymentCreate(BaseModel):
     order_id: int
     provider: PaymentProvider
+    idempotency_key:str
 
 class PaymentResponse(BaseModel):
     id:int

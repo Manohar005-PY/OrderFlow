@@ -6,6 +6,7 @@ class Settings(BaseSettings):
     JWT_SECRET_KEY : str
     JWT_ALGORITHM : str
     ACCESS_TOKEN_EXPIRE_MINUTES : int
+    RABBITMQ_URL:str
     
     model_config = SettingsConfigDict(env_file=".env")
     

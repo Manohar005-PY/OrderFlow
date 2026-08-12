@@ -41,6 +41,11 @@ class Payment(Base):
         onupdate=func.now(),
         nullable=False
     )
+    idempotency_key:Mapped[str] = mapped_column(
+        String(255),
+        unique=True,
+        nullable=False
+    )
 
     order = relationship(
         "Order",

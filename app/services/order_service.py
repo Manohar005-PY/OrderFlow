@@ -64,7 +64,7 @@ class OrderService:
             if not product:
                 raise ProductNotFoundException()
 
-            self.inventory_service._reserve_stock(
+            self.inventory_service.reserve_stock(
             product_id=product.id,
             quantity=item.quantity,
             )

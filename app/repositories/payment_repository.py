@@ -66,3 +66,15 @@ class PaymentRepository:
             )
             .first()
         )
+    def get_by_idempotency_key(
+            self,
+            key:str
+    )-> Payment | None:
+        
+        return (
+            self.db.query(Payment)
+            .filter(
+                Payment.idempotency_key == key
+            )
+            .first()
+        )

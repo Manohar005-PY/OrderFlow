@@ -13,6 +13,7 @@ from app.services.payment_service import PaymentService
 from app.schemas.webhook import PaymentWebhook
 from app.schemas.payment import PaymentResponse
 from app.core.exception import PaymentNotFoundException, OrderNotFoundExceptiion
+from app.repositories.outbox_repository import OutboxRepository
 
 router = APIRouter(
     prefix="/payments",
@@ -29,11 +30,12 @@ def payment_webhook(
     db: Session = Depends(get_db),
 ):  
     product_repository = ProductRepository(db)
-    inventory_repository = InventoryService
+    inventory_repository = InventoryRepository(db)
     payment_repository = PaymentRepository(db)
     order_repository = OrderRepository(db)
     order_item_repository = OrderItemRepository(db)
-    inventory_service = InventoryService(inventory_repository,product_repository,db)
+    inventory_service = InventoryService(inventory_repository,product_repository)
+    outbox_repository = OutboxRepository(db)
 
     gateway = MockGateway()
 
@@ -43,6 +45,7 @@ def payment_webhook(
         order_item_repository=order_item_repository,
         inventory_service=inventory_service,
         gateway=gateway,
+        outbox_repository=outbox_repository
     )
 
     try:
