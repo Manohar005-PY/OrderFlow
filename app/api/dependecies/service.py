@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.application.services.inventory_application_service import InventoryApplicationService
 from app.application.services.product_application_service import ProdctApplicationService
+from app.application.services.order_application_service import OrderApplicationService
 
 def get_inventory_application_service(
         db:Session = Depends(get_db),
@@ -16,3 +17,9 @@ def get_product_application_service(
 ) -> ProdctApplicationService:
 
     return ProdctApplicationService(db)
+
+def get_order_application_service(
+        db:Session = Depends(get_db),
+) -> OrderApplicationService:
+
+    return OrderApplicationService(db)

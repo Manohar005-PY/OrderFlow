@@ -28,6 +28,8 @@ from app.core.exception import (
     InsufficentStockException,
     DuplicateProductException
 )
+from app.application.services.order_application_service import OrderApplicationService
+from app.api.dependecies.service import get_order_application_service
 
 router = APIRouter(
     prefix="/order",
@@ -42,28 +44,28 @@ router = APIRouter(
 def create_order(
     data:OrderCreate,
     current_user = Depends(get_current_active_user),
-    db:Session = Depends(get_db),
+    # db:Session = Depends(get_db),
+    service:OrderApplicationService = Depends(get_order_application_service)
 ):
-    product_repository = ProductRepository(db)
-    inventory_repository = InventoryRepository(db)
+    # product_repository = ProductRepository(db)
+    # inventory_repository = InventoryRepository(db)
 
-    inventory_service = InventoryService(
-        inventory_repository=inventory_repository,
-        product_repository=product_repository,
-        db=db
-    )
+    # inventory_service = InventoryService(
+    #     inventory_repository=inventory_repository,
+    #     product_repository=product_repository,
+    #     db=db
+    # )
 
-    service = OrderService(
-        db=db,
-        order_repository=OrderRepository(db),
-        order_item_repository=OrderItemRepository(db),
-        product_repository=product_repository,
-        inventory_service=inventory_service
-        )
+    # service = OrderService(
+    #     db=db,
+    #     order_repository=OrderRepository(db),
+    #     order_item_repository=OrderItemRepository(db),
+    #     product_repository=product_repository,
+    #     inventory_service=inventory_service
+    #     )
 
     try:
-        with db.begin(): 
-            return service.create_order(
+        return service.create_order(
                 current_user.id,
                 data,
             )
@@ -95,25 +97,24 @@ def create_order(
 def update_order_status(
     order_id: int,
     data: OrderStatusUpdate,
-    db: Session = Depends(get_db),
+    # db: Session = Depends(get_db),
+    service:OrderApplicationService = Depends(get_order_application_service)
 ):
-    product_repository = ProductRepository(db)
+    # product_repository = ProductRepository(db)
 
-    inventory_service = InventoryService(
-        inventory_repository=InventoryRepository(db),
-        product_repository=product_repository,
-        db=db,
-    )
+    # inventory_service = InventoryService(
+    #     inventory_repository=InventoryRepository(db),
+    #     product_repository=product_repository,
+    #     db=db,
+    # )
 
-    service = OrderService(
-        db=db,
-        order_repository=OrderRepository(db),
-        order_item_repository=OrderItemRepository(db),
-        product_repository=product_repository,
-        inventory_service=inventory_service,
-    )
-
-    with db.begin():
+    # service = OrderService(
+    #     db=db,
+    #     order_repository=OrderRepository(db),
+    #     order_item_repository=OrderItemRepository(db),
+    #     product_repository=product_repository,
+    #     inventory_service=inventory_service,
+    # )
         return service.update_status(
             order_id,
             data.status,
