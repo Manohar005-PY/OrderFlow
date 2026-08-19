@@ -1,0 +1,52 @@
+name: OrderFlow CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: orderflow
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d orderflow"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+      rabbitmq:
+        image: rabbitmq:3-management
+        env:
+          RABBITMQ_DEFAULT_USER: admin
+          RABBITMQ_DEFAULT_PASS: admin
+        ports:
+          - 5672:5672
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+
+    env:
+      DATABASE_URL: postgresql+psycopg://postgres:postgres@localhost:5432/orderflow
+      JWT_SECRET_KEY: ci-only-secret-with-at-least-32-characters
+      JWT_ALGORITHM: HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES: 30
+      RABBITMQ_URL: amqp://admin:admin@localhost:5672/
+      REDIS_URL: redis://localhost:6379/0
+      WEBHOOK_SECRET: ci-webhook-secret-with-at-least-32-characters
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements-dev.txt
+      - run: alembic upgrade head
+      - run: pytest -q

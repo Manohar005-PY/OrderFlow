@@ -1,4 +1,5 @@
 from decimal import Decimal
+import uuid
 from app.models.payment_enums import PaymentStatus,PaymentProvider
 
 from datetime import datetime
@@ -44,7 +45,8 @@ class Payment(Base):
     idempotency_key:Mapped[str] = mapped_column(
         String(255),
         unique=True,
-        nullable=False
+        nullable=False,
+        default=lambda: str(uuid.uuid4()),
     )
 
     order = relationship(

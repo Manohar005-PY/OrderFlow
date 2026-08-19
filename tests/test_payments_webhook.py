@@ -19,7 +19,7 @@ def setup_db():
     Base.metadata.create_all(bind=engine)
 
 
-def test_payments_webhook_idempotent():
+def test_payments_webhook_idempotent(signed_webhook):
     setup_db()
 
     client = TestClient(app)
@@ -73,7 +73,8 @@ def test_payments_webhook_idempotent():
         db.close()
 
     # First webhook call
-    resp = client.post("/payments/webhook", json={"provider_payment_id": provider_payment_id})
+    payload, headers = signed_webhook(provider_payment_id)
+    resp = client.post("/payments/webhook", content=payload, headers=headers)
     assert resp.status_code == 200
     body = resp.json()
     assert body["status"] == "SUCCESS"
@@ -87,7 +88,7 @@ def test_payments_webhook_idempotent():
         db.close()
 
     # Second webhook call (idempotency)
-    resp2 = client.post("/payments/webhook", json={"provider_payment_id": provider_payment_id})
+    resp2 = client.post("/payments/webhook", content=payload, headers=headers)
     assert resp2.status_code == 200
     body2 = resp2.json()
     assert body2["status"] == "SUCCESS"

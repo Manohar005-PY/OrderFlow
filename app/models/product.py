@@ -8,36 +8,36 @@ from sqlalchemy.orm import relationship
 from app.db.base import Base
 
 class Product(Base):
-    __tablename__ = "products"
+    __tablename__ = "products" # table name
 
-    id:Mapped[int] = mapped_column(primary_key=True)
+    id:Mapped[int] = mapped_column(primary_key=True) # product_id
 
     sku:Mapped[str] = mapped_column(
         String(50),
         nullable=False,
         unique=True,
         index=True
-    )
+    ) # unique string the product are represnented
 
     name:Mapped[str] = mapped_column(
         String(200),
         nullable=False
-    )
+    ) # name of the product
 
     description:Mapped[str] = mapped_column(
         String(1000),
         nullable=False
-    )
+    ) # about the product
 
     price:Mapped[Decimal] = mapped_column(
         Numeric(10,2),
         nullable=False
-    )
+    ) # price of the item as decimal datatype.
 
     category:Mapped[str] = mapped_column(
         String(100),
         nullable=False
-    )
+    ) # category of the product
 
     is_active:Mapped[bool] = mapped_column(
         Boolean,

@@ -24,5 +24,11 @@ class PaymentNotFoundException(OrderFlowException):
     pass
 class PaymentAlreadyCompletedException(OrderFlowException):
     pass
+class IdempotencyConflictException(OrderFlowException):
+    pass
 class InvalidPaymnetStateException(OrderFlowException):
+    pass
+
+
+class WebhookVerificationException(OrderFlowException):
     pass

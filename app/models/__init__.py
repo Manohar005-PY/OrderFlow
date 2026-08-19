@@ -5,3 +5,5 @@ from .order import Order
 from .order_item import OrderItem
 from .payment import Payment
 from .outbox import OutboxEvent
+from .processed_event import ProcessedEvent
+from .webhook_event import WebhookEvent

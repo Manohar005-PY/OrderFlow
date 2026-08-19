@@ -1,4 +1,5 @@
 import json
+from sqlalchemy.exc import IntegrityError
 
 from app.repositories.payment_repository import PaymentRepository
 from app.repositories.order_repository import OrderRepository
@@ -19,6 +20,7 @@ from app.core.exception import (
     OrderNotFoundExceptiion,
     PaymentAlreadyCompletedException,
     PaymentNotFoundException,
+    IdempotencyConflictException,
 )
 
 
@@ -50,6 +52,8 @@ class PaymentService:
         )
 
         if existing:
+            if existing.order_id != data.order_id or existing.provider != data.provider:
+                raise IdempotencyConflictException()
             return existing
 
         order = self.order_repository.get_by_id(
@@ -83,7 +87,19 @@ class PaymentService:
 
         payment.provider_payment_id = provider_payment_id
 
-        return self.payment_repository.create(payment)
+        try:
+            with self.payment_repository.db.begin_nested():
+                return self.payment_repository.create(payment)
+        except IntegrityError:
+            existing = self.payment_repository.get_by_idempotency_key(
+                data.idempotency_key
+            )
+            if existing and (
+                existing.order_id == data.order_id
+                and existing.provider == data.provider
+            ):
+                return existing
+            raise
 
     def confirm_payment(
         self,

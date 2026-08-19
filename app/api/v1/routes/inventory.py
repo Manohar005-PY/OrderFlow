@@ -10,7 +10,13 @@ from app.repositories.product_repository import ProductRepository
 from app.schemas.inventory import InventoryCreate, InventoryResponse, StockOperation
 from app.services.inventory_service import InventoryService
 from app.schemas.inventory import StockOperation
-from app.core.exception import InventoryNotFoundException,InsufficentStockException,InvalidReservationException
+from app.core.exception import (
+    InventoryAlreadyexistsException,
+    InventoryNotFoundException,
+    InsufficentStockException,
+    InvalidReservationException,
+    ProductNotFoundException,
+)
 from app.application.services.inventory_application_service import InventoryApplicationService
 from app.api.dependecies.service import get_inventory_application_service
 
@@ -54,6 +60,16 @@ def create_inventory(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(e),
     )
+    except InventoryAlreadyexistsException:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Inventory already exists for product.",
+        )
+    except ProductNotFoundException:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Product not found.",
+        )
 
 @router.post(
     "/{product_id}/add-stock",

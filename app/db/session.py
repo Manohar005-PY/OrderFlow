@@ -5,7 +5,12 @@ from sqlalchemy.orm import sessionmaker,Session
 
 engine = create_engine(settings.DATABASE_URL)
 
-SessionLocal = sessionmaker(autoflush=False, autocommit = False, bind=engine)
+SessionLocal = sessionmaker(
+    autoflush=False,
+    autocommit=False,
+    expire_on_commit=False,
+    bind=engine,
+)
 
 def get_db() -> Generator[Session,None,None]:
     db = SessionLocal()

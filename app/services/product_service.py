@@ -17,7 +17,7 @@ class ProductService:
     def create_product(self, product_data: ProductCreate) -> Product:
         existing = self.repository.get_by_sku(product_data.sku)
         if existing:
-            raise ProductNotFoundException()
+            raise ValueError("Product SKU already exists")
         product = Product(
                 sku=product_data.sku,
                 name=product_data.name,
@@ -28,3 +28,16 @@ class ProductService:
         product = self.repository.create(product)
 
         return product
+
+    def get_product(self, product_id: int) -> Product:
+        product = self.repository.get_by_id(product_id)
+        if not product:
+            raise ProductNotFoundException()
+        return product
+
+    def get_active_products(self) -> list[Product]:
+        return self.repository.get_all()
+
+    def deactivate_product(self, product_id: int) -> Product:
+        product = self.get_product(product_id)
+        return self.repository.deactivate(product)

@@ -22,3 +22,13 @@ class ProdctApplicationService:
             return self.product_service.create_product(
                 product
             )
+
+    def get_product(self, product_id: int):
+        return self.product_service.get_product(product_id)
+
+    def get_active_products(self):
+        return self.product_service.get_active_products()
+
+    def deactivate_product(self, product_id: int):
+        with self.db.begin():
+            return self.product_service.deactivate_product(product_id)
